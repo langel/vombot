@@ -1,0 +1,29 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="running.js"></script>
+<style>
+html { 
+	background:#00ff00; 
+	overflow: hidden;
+}
+img {
+	position:absolute;
+	background:rgba(3,3,3,0.1);
+}
+#blade {
+	position:absolute;
+	z-index:200;
+	left: 250px;
+	top: 180px;
+	clip: rect(0px, 40px, 20px, 0px);
+}
+.runner {
+	transform-origin: bottom 20%;
+}
+</style>
+</head>
+<body>
+	<img id="blade" src="pila.gif">
+</body>
+</html>
