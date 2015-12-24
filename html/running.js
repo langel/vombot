@@ -12,7 +12,7 @@ $.easing.easeInCubic = function(x, t, b, c, d) {
 // establish websocket connection and kickstart running
 $(function() {
 	window.ws = window.WebSocket || window.MozWebSocket;
-	conn = new ws('ws://192.168.1.125:1337');
+	conn = new ws('ws://' + window.location.host.split(':')[0] + ':1337');
 	conn.onopen = function() {};
 	conn.onerror = function() {
 		$('body').append('AN ERROR OCCURRED');
@@ -76,7 +76,6 @@ var running_from_saw = {
 		},
 	},
 	update_runner_count: function() {
-		this.runner_count = this.runners.length;
 		conn.send(JSON.stringify(this));
 	},
 	check_for_collisions: function() {
@@ -164,7 +163,9 @@ var runner = {
 	},
 
 	trip_and_die: function() {
-		var e = this.dom_obj;
+		var e = this.dom_obj.stop(true);
+		delete running_from_saw.runners[this.id];
+		running_from_saw.update_runner_count();
 		$({deg: 0}).animate({deg: -90}, {
 			duration: 250,
 			step: function(now) {
@@ -173,8 +174,6 @@ var runner = {
 		});
 		e.animate({left: "2500px"}, {duration: 1000, queue: false, easing: 'easeInCubic', complete: function() {
 			$(this).remove();
-			delete running_from_saw.runners[this.id];
-			running_from_saw.update_runner_count();
 		}});
 	}
 }
