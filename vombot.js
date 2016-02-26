@@ -44,10 +44,28 @@ var runners_list = [
 	'contraman',
 	'megaman',
 ];
+
+
+
+// CHAT RESPONSE
 client.on('chat', function(channel, user, message, self) {
 	var command = message.substr(1);
 	if (runners_list.indexOf(command) > -1) {
 		spawn_runner(command);
+	}
+	var message_array = message.split(' ');
+	if (message_array[0] == '!this') {
+		var dick_length = parseInt(message_array[1]);
+		if (!Number.isInteger(dick_length)) dick_length = 6;
+		if (dick_length < 2) dick_length = 2;
+		if (dick_length > 253) dick_length = 253;
+		var dick_out = '8' + Array(dick_length).join('=') + 'D';
+		console.log(dick_out);
+		client.say('#puke7', dick_out);
+		conn.send(JSON.stringify({
+			action: 'dick_this',
+			data: dick_out,
+		}));
 	}
 });
 
@@ -107,10 +125,12 @@ ws_server.on('request', function(request) {
 		var data = JSON.parse(event.utf8Data);
 		var runner_count = Object.keys(data.runners).length;
 		console.log(runner_count);
-		if (runner_count < 3) {
+		
+		if (runner_count < 1) {
 			console.log('adding duder');
 			client.say('#puke7', '!' + runners_list[Math.floor(Math.random() * runners_list.length)]);
 		}
+		
 	});
 });
 

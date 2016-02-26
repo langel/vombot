@@ -31,6 +31,9 @@ $(function() {
 		if (json.action == 'spawn_runner') {
 			spawn_runner(json.data);
 		}
+		if (json.action == 'dick_this') {
+			dick_this(json.data);
+		}
 	};
 	saw = $('#blade').offset({left: saw_x, top: ~~(baseline_y - 20)});
 	spawn_cycle();
@@ -178,3 +181,20 @@ var runner = {
 	}
 }
 
+
+function dick_this(dick) {
+	console.log(dick);
+	var dick_out = $('<div id="dick_out">' + dick + '</div>');
+	$('body').append(dick_out);
+	var start_y = -$('#dick_out').width()+'px';
+	var body_width = $('body').width();
+	console.log(start_y);
+	dick_out.css({left: start_y, top: 100, visibility: 'visible'});
+	dick_out.animate({left: body_width}, {
+		duration: 2500,
+		easing: 'linear',
+		complete: function() {
+			$(this).remove();
+		}
+	});
+}
