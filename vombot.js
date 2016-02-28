@@ -61,10 +61,20 @@ client.on('chat', function(channel, user, message, self) {
 		if (dick_length > 253) dick_length = 253;
 		var dick_out = '8' + Array(dick_length).join('=') + 'D';
 		console.log(dick_out);
-		client.say('#puke7', dick_out);
-		conn.send(JSON.stringify({
+		//client.say('#puke7', dick_out);
+		sock_send(JSON.stringify({
 			action: 'dick_this',
 			data: dick_out,
+		}));
+	}
+	//console.log(user);
+	if (user['message-type'] == 'chat') {
+		sock_send(JSON.stringify({
+			action: 'chat_add',
+			data: {
+				message: message,
+				user : user,
+			},
 		}));
 	}
 });
@@ -119,12 +129,12 @@ ws_server = new ws.server({
 	httpServer: ws_http
 });
 ws_server.on('request', function(request) {
-	console.log('somone reqeusted');
+	console.log('http bot window reloaded');
 	conn = request.accept(null, request.origin).on('message', function(event) {
 //		console.log(event);
 		var data = JSON.parse(event.utf8Data);
 		var runner_count = Object.keys(data.runners).length;
-		console.log(runner_count);
+		//console.log(runner_count);
 		
 		if (runner_count < 1) {
 			console.log('adding duder');
@@ -135,8 +145,17 @@ ws_server.on('request', function(request) {
 });
 
 
+function sock_send(data) {
+	if (typeof conn != 'object') {
+		console.log('load the browser part n00b!');
+	}
+	else {
+		conn.send(data);
+	}
+}
+
 function spawn_runner(name) {
-	conn.send(JSON.stringify({
+	sock_send(JSON.stringify({
 		action: 'spawn_runner',
 		data: name,
 	}));

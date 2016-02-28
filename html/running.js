@@ -1,6 +1,7 @@
 var json, saw, conn;
 var baseline_y = 200;
-var saw_x = 333;
+var saw_x = 1200;
+var runner_x = 800;
 var max_spawn = 2;
 var spawn_count = 0;
 
@@ -33,6 +34,9 @@ $(function() {
 		}
 		if (json.action == 'dick_this') {
 			dick_this(json.data);
+		}
+		if (json.action == 'chat_add') {
+			chat_add(json.data);
 		}
 	};
 	saw = $('#blade').offset({left: saw_x, top: ~~(baseline_y - 20)});
@@ -122,8 +126,8 @@ var runner = {
 		this.id = id;
 		var $this = this;
 		this.dom_obj.on('load', function() {
-			$('body').append($this.dom_obj.offset({top: -200}));
-			var start_x = Math.random() * (saw.position().left - $this.dist_x);
+			$('#runner_container').append($this.dom_obj.offset({top: -200}));
+			var start_x = Math.random() * (saw.position().left - runner_x - $this.dist_x) + runner_x;
 			var start_x_offset = start_x + Math.random() * $this.dist_x;
 			var fall_from_max_x = 250;
 			var fall_from_x = start_x_offset + (Math.random() * fall_from_max_x - fall_from_max_x / 2);
@@ -145,10 +149,11 @@ var runner = {
 	},
 
 	handle_x:  function() {
-		var dest = this.start_x + Math.random() * this.dist_x;
+		var dest = (Math.random() * this.dist_x) + runner_x;
 		var dur = Math.random() * this.dur_x + dest * 100
 		var $this = this;
 		$this.dom_obj.animate({left: dest + "px"}, {duration: dur, queue: false, complete: function() {
+			$this.start_x = dest;
 			$this.handle_x();
 		}});
 	},
@@ -197,4 +202,12 @@ function dick_this(dick) {
 			$(this).remove();
 		}
 	});
+}
+
+
+function chat_add(message) {
+	var out = message.user.username + ' : ' + message.message + '<br>';
+	$('#twitch_chats_inner').append(out);
+	var dump = ' ' + JSON.stringify(message) + '<br>';
+	$('#twitch_chat_user_dump').append(JSON.stringify(message));
 }
