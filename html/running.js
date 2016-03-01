@@ -81,6 +81,20 @@ var running_from_saw = {
 			dist_y: 12,
 			dur_y: 30,
 		},
+		ash: {
+			name: 'ash',
+			dist_x: 333,
+			dur_x: 222,
+			dist_y: 9,
+			dur_y: 99,
+		},
+		goomba: {
+			name: 'goombah',
+			dist_x: 30,
+			dur_x: 40,
+			dist_y: 7,
+			dur_y: 30,
+		},
 	},
 	update_runner_count: function() {
 		conn.send(JSON.stringify(this));
@@ -120,7 +134,7 @@ var runner = {
 		var id = name + running_from_saw.runner_count;
 		this.dom_obj = $("<img/>", {
 			id: id, 
-			src: name + '.gif', 
+			src: 'sprites/' + name + '-running.gif', 
 			class: 'runner',
 		});
 		this.id = id;
@@ -132,6 +146,7 @@ var runner = {
 			var fall_from_max_x = 250;
 			var fall_from_x = start_x_offset + (Math.random() * fall_from_max_x - fall_from_max_x / 2);
 			var start_y = baseline_y - $this.dom_obj.height() - ($this.dist_y / 2);
+			console.log(start_y);
 			var start_y_offset = start_y + Math.random() * $this.dist_y;
 			// make sprites fall into screen
 			$this.dom_obj.offset({top: -200, left: fall_from_x}).animate({top: start_y_offset, left: start_x_offset}, {duration: 1500, queue: false, easing: 'easeInCubic', complete: function() {
@@ -206,7 +221,7 @@ function dick_this(dick) {
 
 
 function chat_add(message) {
-	var out = message.user.username + ' : ' + message.message + '<br>';
+	var out = '<span style="color:' + message.user.color + '">' + message.user.username + ' : </span>' + message.message + '<br>';
 	$('#twitch_chats_inner').append(out);
 	var dump = ' ' + JSON.stringify(message) + '<br>';
 	$('#twitch_chat_user_dump').append(JSON.stringify(message));

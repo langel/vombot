@@ -23,14 +23,23 @@ div {
 }
 #runner_container {
 	position: relative;
-	background:#00ff00; 
+	background:#330033; 
 	width: 1280px;
 	height: 250px;
+}
+#running_belt {
+	position: absolute;
+	height: 17px;
+	width: 500px;
+	bottom: 43px;
+	right: 0;
+	background-image: url("sprites/running-belt.gif");
 }
 #blade {
 	position:absolute;
 	z-index:200;
 	clip: rect(0px, 40px, 20px, 0px);
+	//border-bottom: black 1px solid;
 }
 .runner {
 	transform-origin: bottom 20%;
@@ -54,7 +63,7 @@ div {
 #twitch_chats {
 	position:relative;
 	float: right;
-	width: 580;
+	width: 480;
 	height: 400px;
 	overflow-y: scroll;
 	background: #444;
@@ -63,6 +72,7 @@ div {
 	font-weight: bold;
 	font-size: 14px;
 	line-height: 1.5em;
+	text-shadow: 1px 1px 1px black;
 }
 #twitch_chats_inner {
 	position:absolute;
@@ -86,9 +96,12 @@ div {
 </head>
 <body>
 	<div id="runner_container">
-		<img id="blade" src="pila.gif">
+		<img id="blade" src="sprites/blade.gif">
+		<div id="running_belt"></div>
 	</div>
+	<!--
 	<iframe id="botb_radio" src="http://battleofthebits.org/player/Radio" frameborder="0"></iframe>
+	-->
 	<div id="twitch_chats">
 		<div id="twitch_chats_inner"></div>
 	</div>

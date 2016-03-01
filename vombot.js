@@ -1,5 +1,6 @@
 // Do NOT include this line if you are using the built js version!
 
+//var exec = require('child-process').exec;
 var http = require('http');
 var ws = require('websocket');
 var irc = require('tmi.js');
@@ -40,20 +41,29 @@ client.on('part', function(channel, user) {
 client.on('hosted', function(channel, user, viewers) {
 	console.log(user + ' now hosting with ' + viewer_count + ' viewers'+ cr);
 });
-var runners_list = [
-	'contraman',
-	'megaman',
-];
 
-
+/*
+exec('curl -H "Accept: application/vnd.twitchtv.v3+json" -X GET https://api.twitch.tv/kraken/channels/puke7/follows', 
+	(error, stdout, stderr) => {
+		console.log(stdout);
+	}
+);
+*/
 
 // CHAT RESPONSE
 client.on('chat', function(channel, user, message, self) {
 	var command = message.substr(1);
-	if (runners_list.indexOf(command) > -1) {
-		spawn_runner(command);
-	}
 	var message_array = message.split(' ');
+	if (message_array[0] == '!runner') {
+		var available_runners = fs.readdirSync('html/sprites/').filter(function(val) {
+			return (val.indexOf('-running.gif') != -1);
+		});
+		console.log(available_runners);
+		var runner_name = available_runners[Math.floor(Math.random() * available_runners.length)];
+		runner_name = runner_name.substr(0, runner_name.indexOf('-'));
+		console.log(runner_name);
+		spawn_runner(runner_name);
+	}
 	if (message_array[0] == '!this') {
 		var dick_length = parseInt(message_array[1]);
 		if (!Number.isInteger(dick_length)) dick_length = 6;
