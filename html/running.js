@@ -38,22 +38,16 @@ $(function() {
 		if (json.action == 'chat_add') {
 			chat_add(json.data);
 		}
+		if (json.action == 'watchers_update') {
+			watchers_update(json.data);
+		}
 	};
 	saw = $('#blade').offset({left: saw_x, top: ~~(baseline_y - 20)});
-	spawn_cycle();
 	setInterval(function() {
 		running_from_saw.check_for_collisions();
 	}, 250);
 });
 
-function spawn_cycle() {
-	spawn_runner('megaman');
-	spawn_runner('contraman');
-	if (spawn_count <= max_spawn) {
-		setTimeout(spawn_cycle, 100);
-		spawn_count++;
-	}
-}
 
 function spawn_runner(name) {
 	new_runner = Object.create(runner);
@@ -225,4 +219,8 @@ function chat_add(message) {
 	$('#twitch_chats_inner').append(out);
 	var dump = ' ' + JSON.stringify(message) + '<br>';
 	$('#twitch_chat_user_dump').append(JSON.stringify(message));
+}
+
+function watchers_update(data) {
+	$('#watchers_info').text(data.count + ' ' + data.text);
 }
