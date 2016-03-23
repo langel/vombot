@@ -17,8 +17,8 @@ var options = {
 		debug: true
 	},
 	connection: {
-		random: "chat",
-		reconnect: true
+		reconnect: true,
+		cluster: "aws",
 	},
 	identity: {
 		username: 'vomitbot',
