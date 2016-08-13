@@ -1,12 +1,9 @@
-// Do NOT include this line if you are using the built js version!
-
-//var exec = require('child-process').exec;
 var curl = require('curl');
 var http = require('http');
+var http_server = require('./source/http_server.js');
 var ws = require('websocket');
 var irc = require('tmi.js');
 var fs = require('fs');
-var url = require('url');
 
 var cr = "\r\n";
 
@@ -49,14 +46,37 @@ client.on('hosted', function(channel, user, viewers) {
 curl.get('https://api.twitch.tv/kraken/channels/puke7/follows', {
 	HTTPHEADER: 'Accept: application/vnd.twitchtv.v3+json'
 }, function(err) {
-	console.info(this);
+	//console.info(this);
 });
 
+var badges, emotes;
+curl.get('https://api.twitch.tv/kraken/chat/emotes/emoticons', {}, function(err, response, body) {
+	// interpret response
+	response = JSON.parse(body);
+	var emoticons = response.emoticons;
+	// create the map
+	emotes = new Map();
+	emoticons.forEach(function(emote) {
+		emotes.set(emote.regex, emote.url);
+	});
+	console.log('emotes loaded');
+});
+
+function parse_emotes(string) {
+	var words = string.split(' ');
+	for (i in words) {
+		if (emotes.has(words[i])) {
+			words[i] = '<img src="' + emotes.get(words[i]) + '">';
+		}
+	}
+	return words.join(' ');
+}
 
 // CHAT RESPONSE
 client.on('chat', function(channel, user, message, self) {
 	var command = message.substr(1);
 	var message_array = message.split(' ');
+	var message_emotes = parse_emotes(message);
 	if (message_array[0] == '!runner') {
 		spawn_random_runner();
 	}
@@ -68,6 +88,7 @@ client.on('chat', function(channel, user, message, self) {
 			action: 'chat_add',
 			data: {
 				message: message,
+				message_emotes: message_emotes,
 				user : user,
 			},
 		}));
@@ -75,49 +96,14 @@ client.on('chat', function(channel, user, message, self) {
 });
 
 
-
-// SERVER CODE HERE 
-var http_specs  = {
-	ip: "192.168.1.125",
-	port: 3000,
-}
-http.createServer(function (req, res) {
-
-	var request = url.parse(req.url, true);
-	var action = request.pathname;
-	//console.log(action);
-
-	if (action.substr(-4) == '.gif') {
-		try {	
-			var img = fs.readFileSync('html/' + action);
-			res.writeHead(200, {'Content-Type': 'image/gif' });
-			res.end(img, 'binary');
-		}
-		catch(e) {
-			res.writeHead(500);
-			res.end();
-		}
-	}
-	else if (action.substr(-3) == '.js') {
-		var img = fs.readFileSync('html/' + action);
-		res.writeHead(200, {'Content-Type': 'text/javascript' });
-		res.end(img, 'binary');
-	}
-	else {
-		res.writeHead(200, {'Content-Type': 'text/html'});
-		fs.readFile('html/running.html', 'utf8', function(err, data) {
-			res.end(data);
-		});
-	}
-}).listen(http_specs.port, http_specs.ip);
-console.log('Server running at ' + http_specs.ip + ':' + http_specs.port);
+http_server.initialize();
 
 
 
 // WEBSOCKETS HERE
 var conn;
 var ws_http = http.createServer(function(request, response) {});
-ws_http.listen(1337, function(){});
+ws_http.listen(1338, function(){});
 console.log('websockets ready');
 ws_server = new ws.server({	
 	httpServer: ws_http
@@ -153,7 +139,7 @@ function sock_send(data) {
 //  RUNNER HANDLER HERE
 var available_runners = [];
 function init_runner_data() {
-	available_runners = fs.readdirSync('html/sprites/').filter(function(val) {
+	available_runners = fs.readdirSync('source/html/sprites/').filter(function(val) {
 		return (val.indexOf('-running.gif') != -1);
 	});
 	console.log(available_runners);

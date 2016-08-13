@@ -1,7 +1,7 @@
 var json, saw, conn;
-var baseline_y = 200;
-var saw_x = 1200;
-var runner_x = 800;
+var baseline_y = 350;
+var saw_x = 1550;
+var runner_x = 1200;
 var max_spawn = 2;
 var spawn_count = 0;
 
@@ -13,7 +13,7 @@ $.easing.easeInCubic = function(x, t, b, c, d) {
 // establish websocket connection and kickstart running
 $(function() {
 	window.ws = window.WebSocket || window.MozWebSocket;
-	conn = new ws('ws://' + window.location.host.split(':')[0] + ':1337');
+	conn = new ws('ws://' + window.location.host.split(':')[0] + ':1338');
 	conn.onopen = function() {};
 	conn.onerror = function() {
 		$('body').append('AN ERROR OCCURRED');
@@ -215,10 +215,10 @@ function dick_this(dick) {
 
 
 function chat_add(message) {
-	var out = '<span style="color:' + message.user.color + '">' + message.user.username + ' : </span>' + message.message + '<br>';
+	var out = '<span style="color:' + message.user.color + '">' + message.user.username + ' : </span>' + message.message_emotes + '<br>';
 	$('#twitch_chats_inner').append(out);
 	var dump = ' ' + JSON.stringify(message) + '<br>';
-	$('#twitch_chat_user_dump').append(JSON.stringify(message));
+	$('#stdout').append(JSON.stringify(message));
 }
 
 function watchers_update(data) {

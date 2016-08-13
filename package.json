@@ -1,0 +1,27 @@
+{
+  "name": "vom_bot",
+  "version": "1.0.0",
+  "description": "puke7's twitch bot",
+  "main": "vombot.js",
+  "dependencies": {
+    "curl": "^0.1.4",
+    "irc": "^0.5.0",
+	 "tmi.js": "^1.1.1",
+	 "websocket": "^1.0.23"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/langel/vombot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/langel/vombot/issues"
+  },
+  "homepage": "https://github.com/langel/vombot#readme"
+}
+

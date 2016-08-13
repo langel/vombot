@@ -1,0 +1,98 @@
+html { 
+	background:#333333; 
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+}
+body {
+	position: relative;
+	padding: 0;
+	margin: 0;
+}
+img {
+	position:absolute;
+	//background:rgba(3,3,3,0.1);
+}
+div {
+	box-sizing: border-box;
+}
+#runner_container {
+	position: relative;
+	background:#330033; 
+	width: 1600px;
+	height: 400px;
+}
+#running_belt {
+	position: absolute;
+	height: 17px;
+	width: 500px;
+	bottom: 43px;
+	right: 0;
+	background-image: url("sprites/running-belt.gif");
+}
+#blade {
+	position:absolute;
+	z-index:200;
+	clip: rect(0px, 40px, 20px, 0px);
+	//border-bottom: black 1px solid;
+}
+.runner {
+	transform-origin: bottom 20%;
+}
+#dick_out {
+	position:absolute;
+	visibility: hidden;
+	font-size: 48px;
+	color: #fdc4b3;
+	font-weight: bold;
+	font-family: verdana, sans-serif;
+	letter-spacing: -12px;
+	text-shadow: 0px 0px 3px #7f4329;
+}
+#botb_radio {
+	margin: 10px;
+	width: 680px;
+	height: 200px;
+	float: left;
+}
+#twitch_chats {
+	position:relative;
+	float: right;
+	width: 480;
+	height: 400px;
+	overflow-y: scroll;
+	background: #444;
+	color: #ddd;
+	font-family: 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;
+	font-weight: bold;
+	font-size: 16px;
+	line-height: 1.5em;
+	text-shadow: 1px 1px 1px black;
+}
+#twitch_chats_inner {
+	position:absolute;
+	width: 100%;
+	bottom: 0;
+	padding: 16px;
+}
+#stdout {
+	clear: left;
+	float: left;
+	width: 600px;
+	height: 200px;
+	overflow-y: scroll;
+	background: #111;
+	color: #ccc;
+	font-family: monospace;
+	font-size: 12px;
+	padding: 10px;
+}
+#watchers_info {
+	clear: left;
+	font-family: sans-serif;
+	color: #ddd;
+	text-shadow: 1px 1px 1px black;
+	padding: 10px;
+	font-size: 14px;
+}
+
