@@ -49,17 +49,33 @@ curl.get('https://api.twitch.tv/kraken/channels/puke7/follows', {
 	//console.info(this);
 });
 
+/*
+ * load badge and emote info from twitch api
+ */
 var badges, emotes;
 curl.get('https://api.twitch.tv/kraken/chat/emotes/emoticons', {}, function(err, response, body) {
 	// interpret response
 	response = JSON.parse(body);
-	var emoticons = response.emoticons;
+	var data = response.emoticons;
 	// create the map
 	emotes = new Map();
-	emoticons.forEach(function(emote) {
+	data.forEach(function(emote) {
 		emotes.set(emote.regex, emote.url);
 	});
 	console.log('emotes loaded');
+});
+curl.get('https://api.twitch.tv/kraken/chat/emotes/badges', {}, function(err, response, body) {
+	// interpret response
+	var data = JSON.parse(body);
+	badges = new Map();
+	for (key in data) {
+		if ((typeof data[key] === 'object') && (data[key] !== null)) {
+			if (data[key].hasOwnProperty('image')) {
+				badges.set(key, data[key].image);
+			}
+		}
+	}
+	console.log('badges loaded');
 });
 
 function parse_emotes(string) {
@@ -75,20 +91,27 @@ function parse_emotes(string) {
 // CHAT RESPONSE
 client.on('chat', function(channel, user, message, self) {
 	var command = message.substr(1);
-	var message_array = message.split(' ');
-	var message_emotes = parse_emotes(message);
-	if (message_array[0] == '!runner') {
+	var message_words = message.split(' ');
+	var message_out = parse_emotes(message);
+	var user_badges = [];
+	if (typeof user.badges !== 'null') {
+		for (badge_type in user.badges) {
+			user_badges.push(badges.get(badge_type));
+		}
+	}
+	if (message_words[0] == '!runner') {
 		spawn_random_runner();
 	}
-	if (message_array[0] == '!this') {
-		dick_marquee(message_array[1]);
+	if (message_words[0] == '!this') {
+		dick_marquee(message_words[1]);
 	}
 	if (user['message-type'] == 'chat') {
 		sock_send(JSON.stringify({
 			action: 'chat_add',
 			data: {
+				badges: user_badges,
 				message: message,
-				message_emotes: message_emotes,
+				message_out: message_out,
 				user : user,
 			},
 		}));

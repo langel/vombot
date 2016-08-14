@@ -10,7 +10,6 @@ body {
 	margin: 0;
 }
 img {
-	position:absolute;
 	//background:rgba(3,3,3,0.1);
 }
 div {
@@ -21,6 +20,9 @@ div {
 	background:#330033; 
 	width: 1600px;
 	height: 400px;
+}
+#runner_container img {
+	position:absolute;
 }
 #running_belt {
 	position: absolute;
@@ -68,6 +70,13 @@ div {
 	font-size: 16px;
 	line-height: 1.5em;
 	text-shadow: 1px 1px 1px black;
+}
+#twitch_chats img {
+	display: inline-block;
+	vertical-align: middle;
+}
+#twitch_chats img.badge {
+	margin-right: 5px;
 }
 #twitch_chats_inner {
 	position:absolute;

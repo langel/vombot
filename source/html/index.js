@@ -215,7 +215,11 @@ function dick_this(dick) {
 
 
 function chat_add(message) {
-	var out = '<span style="color:' + message.user.color + '">' + message.user.username + ' : </span>' + message.message_emotes + '<br>';
+	var out = '';
+	message.badges.forEach(function(badge_url) {
+		out += '<img class="badge" src="' + badge_url + '">';
+	});
+	out += '<span style="color:' + message.user.color + '">' + message.user.username + ' : </span>' + message.message_out + '<br>';
 	$('#twitch_chats_inner').append(out);
 	var dump = ' ' + JSON.stringify(message) + '<br>';
 	$('#stdout').append(JSON.stringify(message));
