@@ -25,29 +25,16 @@ var options = {
 };
 
 
-// Connect the client to the server..
-var client = new irc.client(options);
-client.connect();
 
-// handle twitch chat events
-client.on('join', function(channel, user) {
-	console.log(user + ' has joined' + cr);
-	user_join(user);
-});
-client.on('part', function(channel, user) {
-	console.log(user + ' has parted' + cr);
-	user_part(user);
-});
-client.on('hosted', function(channel, user, viewers) {
-	console.log(user + ' now hosting with ' + viewer_count + ' viewers'+ cr);
-});
-
-
+/*
+	trying to replace twitch alerts with new follower alerts
 curl.get('https://api.twitch.tv/kraken/channels/puke7/follows', {
 	HTTPHEADER: 'Accept: application/vnd.twitchtv.v3+json'
 }, function(err) {
 	//console.info(this);
 });
+*/
+
 
 /*
  * load badge and emote info from twitch api
@@ -71,6 +58,7 @@ curl.get('https://api.twitch.tv/kraken/chat/emotes/badges', {}, function(err, re
 	for (key in data) {
 		if ((typeof data[key] === 'object') && (data[key] !== null)) {
 			if (data[key].hasOwnProperty('image')) {
+				if (key == 'mod') badges.set('moderator', data[key].image);
 				badges.set(key, data[key].image);
 			}
 		}
@@ -88,6 +76,23 @@ function parse_emotes(string) {
 	return words.join(' ');
 }
 
+// Connect the client to the server..
+var client = new irc.client(options);
+client.connect();
+
+// handle twitch chat events
+client.on('join', function(channel, user) {
+	console.log(user + ' has joined' + cr);
+	user_join(user);
+});
+client.on('part', function(channel, user) {
+	console.log(user + ' has parted' + cr);
+	user_part(user);
+});
+client.on('hosted', function(channel, user, viewers) {
+	console.log(user + ' now hosting with ' + viewer_count + ' viewers'+ cr);
+});
+
 // CHAT RESPONSE
 client.on('chat', function(channel, user, message, self) {
 	var command = message.substr(1);
@@ -104,6 +109,7 @@ client.on('chat', function(channel, user, message, self) {
 	}
 	if (message_words[0] == '!this') {
 		dick_marquee(message_words[1]);
+		client.say(options.channels[0], '!runner');
 	}
 	if (user['message-type'] == 'chat') {
 		sock_send(JSON.stringify({
@@ -161,13 +167,7 @@ function sock_send(data) {
 
 //  RUNNER HANDLER HERE
 var available_runners = [];
-function init_runner_data() {
-	available_runners = fs.readdirSync('source/html/sprites/').filter(function(val) {
-		return (val.indexOf('-running.gif') != -1);
-	});
-	console.log(available_runners);
-};
-init_runner_data();
+
 function spawn_random_runner() {
 	var runner_name = available_runners[Math.floor(Math.random() * available_runners.length)];
 	runner_name = runner_name.substr(0, runner_name.indexOf('-'));
@@ -177,6 +177,13 @@ function spawn_random_runner() {
 		data: runner_name,
 	}));
 }
+
+(function init_runner_data() {
+	available_runners = fs.readdirSync('source/html/sprites/').filter(function(val) {
+		return (val.indexOf('-running.gif') != -1);
+	});
+	console.log(available_runners);
+})();
 
 
 // WATCHERS HANDLER HERE

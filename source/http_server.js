@@ -14,8 +14,8 @@ module.exports = {
 
 			var request = url.parse(req.url, true);
 			var action = request.pathname;
-			var web_root = 'source/html/';
-			console.log(web_root + action);
+			var web_root = 'source/html';
+			console.log('http access: ' + web_root + action);
 
 			try {
 				if (action.substr(-4) == '.gif') {
@@ -29,8 +29,7 @@ module.exports = {
 					res.end(file, 'binary');
 				}
 				else {
-					console.log(action);
-					if (action == '/') action = 'index.html';
+					if (action == '/') action = '/index.html';
 					res.writeHead(200, {'Content-Type': 'text/html'});
 					fs.readFile(web_root + action, 'utf8', function(err, data) {
 						res.end(data);
@@ -38,6 +37,7 @@ module.exports = {
 				}
 			}
 			catch(e) {
+				console.log('404/500 http error');
 				res.writeHEAD(500);
 				res.end();
 			}
