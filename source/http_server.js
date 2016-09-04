@@ -1,3 +1,4 @@
+var colors = require('colors/safe');
 var fs = require('fs');
 var http = require('http');
 var url = require('url');
@@ -15,7 +16,7 @@ module.exports = {
 			var request = url.parse(req.url, true);
 			var action = request.pathname;
 			var web_root = 'source/html';
-			console.log('http access: ' + web_root + action);
+			console.log(colors.cyan('http access: ' + web_root + action));
 
 			try {
 				if (action.substr(-4) == '.gif') {
@@ -37,12 +38,12 @@ module.exports = {
 				}
 			}
 			catch(e) {
-				console.log('404/500 http error');
+				console.log(colors.cyan('404/500 http error'));
 				res.writeHEAD(500);
 				res.end();
 			}
 		}).listen(http_specs.port, http_specs.ip);
-		console.log('Server running at ' + http_specs.ip + ':' + http_specs.port);
+		console.log(colors.cyan('Server running at ' + http_specs.ip + ':' + http_specs.port));
 	}
 
 };

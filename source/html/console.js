@@ -221,8 +221,9 @@ function chat_add(message) {
 	});
 	out += '<span style="color:' + message.user.color + '">' + message.user.username + ' : </span>' + message.message_out + '<br>';
 	$('#twitch_chats_inner').append(out);
+	delete message.message_out;
 	var dump = ' ' + JSON.stringify(message) + '<br>';
-	$('#stdout').append(JSON.stringify(message));
+	$('#stdout').append(dump);
 }
 
 function watchers_update(data) {

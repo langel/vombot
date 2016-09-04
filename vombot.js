@@ -1,3 +1,4 @@
+var colors = require('colors');
 var curl = require('curl');
 var http = require('http');
 var http_server = require('./source/http_server.js');
@@ -49,7 +50,7 @@ curl.get('https://api.twitch.tv/kraken/chat/emotes/emoticons', {}, function(err,
 	data.forEach(function(emote) {
 		emotes.set(emote.regex, emote.url);
 	});
-	console.log('emotes loaded');
+	console.log('emotes loaded'.yellow);
 });
 curl.get('https://api.twitch.tv/kraken/chat/emotes/badges', {}, function(err, response, body) {
 	// interpret response
@@ -63,7 +64,7 @@ curl.get('https://api.twitch.tv/kraken/chat/emotes/badges', {}, function(err, re
 			}
 		}
 	}
-	console.log('badges loaded');
+	console.log('badges loaded'.yellow);
 });
 
 function parse_emotes(string) {
@@ -81,16 +82,20 @@ var client = new irc.client(options);
 client.connect();
 
 // handle twitch chat events
+var log;
 client.on('join', function(channel, user) {
-	console.log(user + ' has joined' + cr);
+	log = user + ' has joined';
+	console.log(log.red);
 	user_join(user);
 });
 client.on('part', function(channel, user) {
-	console.log(user + ' has parted' + cr);
+	log = user + ' has parted';
+	console.log(log.red);
 	user_part(user);
 });
 client.on('hosted', function(channel, user, viewers) {
-	console.log(user + ' now hosting with ' + viewer_count + ' viewers'+ cr);
+	log = user + ' now hosting with ' + viewer_count + ' viewers';
+	console.log(log.red);
 });
 
 // CHAT RESPONSE
@@ -133,12 +138,12 @@ http_server.initialize();
 var conn;
 var ws_http = http.createServer(function(request, response) {});
 ws_http.listen(1338, function(){});
-console.log('websockets ready');
+console.log('websockets ready'.magenta);
 ws_server = new ws.server({	
 	httpServer: ws_http
 });
 ws_server.on('request', function(request) {
-	console.log('http bot window reloaded');
+	console.log('http bot window reloaded'.magenta);
 	conn = request.accept(null, request.origin).on('message', function(event) {
 //		console.log(event);
 		var data = JSON.parse(event.utf8Data);
@@ -150,14 +155,14 @@ ws_server.on('request', function(request) {
 });
 
 function client_send_init() {
-	console.log('client init');
+	console.log('client init'.green);
 	update_watchers_info();
 	spawn_random_runner();
 }
 
 function sock_send(data) {
 	if (typeof conn != 'object') {
-		console.log('load the browser part n00b!');
+		console.log('load the browser part n00b!'.green);
 	}
 	else {
 		conn.send(data);
@@ -171,7 +176,8 @@ var available_runners = [];
 function spawn_random_runner() {
 	var runner_name = available_runners[Math.floor(Math.random() * available_runners.length)];
 	runner_name = runner_name.substr(0, runner_name.indexOf('-'));
-	console.log(runner_name);
+	log = 'runner ' + runner_name + ' added';
+	console.log(log.red);
 	sock_send(JSON.stringify({
 		action: 'spawn_runner',
 		data: runner_name,
