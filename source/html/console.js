@@ -43,6 +43,7 @@ $.easing.easeInCubic = function(x, t, b, c, d) {
 		if (json.action == 'dick_this') {
 			dick_this(json.data);
 		}
+		// handles texts and actions
 		if (json.action == 'chat_add') {
 			chat_add(json.data);
 		}
@@ -232,7 +233,15 @@ function chat_add(message) {
 	message.badges.forEach(function(badge_url) {
 		out += '<img class="badge" src="' + badge_url + '">';
 	});
-	out += '<span style="color:' + message.user.color + '">' + message.user.username + ' : </span>' + message.message_out + '<br>';
+	out += '<span style="color:' + message.user.color + '">' + message.user.username;
+	if (message.type === 'text') {
+		out += ' : </span>';
+	}
+	out += ' ' + message.message_out;
+	if (message.type === 'action') { 
+		out += '</span>';
+	}
+	out += '<br>';
 	$('#twitch_chats_inner').append(out);
 	delete message.message_out;
 	var dump = ' ' + JSON.stringify(message);
@@ -241,7 +250,7 @@ function chat_add(message) {
 }
 
 function log_write(text) {
-	$('#stdout').append(text + '<br>');
+	$('#stdout_inner').append(text + '<br>');
 }
 
 function watchers_update(data) {

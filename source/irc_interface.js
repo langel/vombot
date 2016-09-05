@@ -32,6 +32,25 @@ function update_watchers_info(watchers) {
 	});
 }
 
+function chat_add(user, message, type) {
+	var command = message.substr(1);
+	var message_out = twitch_assets.parse_emotes(message);
+	var user_badges = [];
+	if (typeof user.badges !== 'null') {
+		user_badges = twitch_assets.user_badges_array(user.badges);
+	}
+	ws_server.send({
+		action: 'chat_add',
+		data: {
+			badges: user_badges,
+			message: message,
+			message_out: message_out,
+			user: user,
+			type: type,
+		},
+	});
+}
+
 module.exports = {
 
 	initialize: function() {
@@ -52,26 +71,13 @@ module.exports = {
 			twitch_assets.hosted(user, viewers);
 		});
 
-		// CHAT RESPONSE
+		client.on('action', function(channel, user, message, self) {
+			chat_add(user, message, 'action');
+		});
 		client.on('chat', function(channel, user, message, self) {
-			var command = message.substr(1);
+			chat_add(user, message, 'text');
+			// handle commands
 			var message_words = message.split(' ');
-			var message_out = twitch_assets.parse_emotes(message);
-			var user_badges = [];
-			if (typeof user.badges !== 'null') {
-				user_badges = twitch_assets.user_badges_array(user.badges);
-			}
-			if (user['message-type'] == 'chat') {
-				ws_server.send({
-					action: 'chat_add',
-					data: {
-						badges: user_badges,
-						message: message,
-						message_out: message_out,
-						user : user,
-					},
-				});
-			}
 			if (message_words[0] == '!runner') {
 				spawn_random_runner();
 			}
@@ -81,6 +87,13 @@ module.exports = {
 			}
 		});
 
+		// XXX not followes  :(
+		client.on('resub', function(channel, user) {
+			client.say(options.channels[0], user + ' has resubbed! deIlluminati deIlluminati deIlluminati');
+		});
+		client.on('subscription', function(channel, user) {
+			client.say(option.channels[0], user + ' has subscribed! KappaRoss KappaRoss KappaRoss');
+		});
 
 	}
 

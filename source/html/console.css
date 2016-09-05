@@ -85,6 +85,7 @@ div {
 	padding: 16px;
 }
 #stdout {
+	position: relative;
 	clear: left;
 	float: left;
 	width: 600px;
@@ -94,6 +95,11 @@ div {
 	color: #ccc;
 	font-family: monospace;
 	font-size: 12px;
+}
+#stdout_inner {
+	position:absolute;
+	width: 100%;
+	bottom: 0;
 	padding: 10px;
 }
 #watchers_info {

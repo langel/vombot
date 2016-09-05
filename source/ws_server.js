@@ -31,7 +31,6 @@ module.exports = {
 		else {
 			conn.send(JSON.stringify(object));
 		}
-		
 	}
 
 };
