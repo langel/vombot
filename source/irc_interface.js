@@ -1,3 +1,4 @@
+var commands = require('./commands.js');
 var irc = require('tmi.js');
 var twitch_assets = require('./twitch_assets.js');
 var ws_server = require('./ws_server.js');
@@ -77,13 +78,11 @@ module.exports = {
 		client.on('chat', function(channel, user, message, self) {
 			chat_add(user, message, 'text');
 			// handle commands
-			var message_words = message.split(' ');
-			if (message_words[0] == '!runner') {
-				spawn_random_runner();
-			}
-			if (message_words[0] == '!this') {
-				dick_marquee(message_words[1]);
-				client.say(options.channels[0], '!runner');
+			var words = message.split(' ');
+			if (words[0].substring(0, 1) === '!') {
+				if (typeof commands[words[0]] === 'function') {
+					commands[words[0]](words);
+				}
 			}
 		});
 
@@ -92,7 +91,7 @@ module.exports = {
 			client.say(options.channels[0], user + ' has resubbed! deIlluminati deIlluminati deIlluminati');
 		});
 		client.on('subscription', function(channel, user) {
-			client.say(option.channels[0], user + ' has subscribed! KappaRoss KappaRoss KappaRoss');
+			client.say(options.channels[0], user + ' has subscribed! KappaRoss KappaRoss KappaRoss');
 		});
 
 	}
