@@ -1,29 +1,10 @@
 var colors = require('colors');
-var curl = require('curl');
-var http = require('http');
 var http_server = require('./source/http_server.js');
-var ws = require('websocket');
-var irc = require('tmi.js');
+var irc_interface = require('./source/irc_interface.js');
+var twitch_assets = require('./source/twitch_assets.js');
+var ws_server = require('./source/ws_server.js');
 var fs = require('fs');
 
-var cr = "\r\n";
-
-// BOT CODE HERE
-var creds = require('./token.js');
-var options = {
-	options: {
-		debug: true
-	},
-	connection: {
-		reconnect: true,
-		cluster: "aws",
-	},
-	identity: {
-		username: 'vomitbot',
-		password: creds.twitch.oauth
-	},
-	channels: ["#puke7"]
-};
 
 
 
@@ -38,136 +19,13 @@ curl.get('https://api.twitch.tv/kraken/channels/puke7/follows', {
 
 
 /*
- * load badge and emote info from twitch api
+ * initialize services
  */
-var badges, emotes;
-curl.get('https://api.twitch.tv/kraken/chat/emotes/emoticons', {}, function(err, response, body) {
-	// interpret response
-	response = JSON.parse(body);
-	var data = response.emoticons;
-	// create the map
-	emotes = new Map();
-	data.forEach(function(emote) {
-		emotes.set(emote.regex, emote.url);
-	});
-	console.log('emotes loaded'.yellow);
-});
-curl.get('https://api.twitch.tv/kraken/chat/emotes/badges', {}, function(err, response, body) {
-	// interpret response
-	var data = JSON.parse(body);
-	badges = new Map();
-	for (key in data) {
-		if ((typeof data[key] === 'object') && (data[key] !== null)) {
-			if (data[key].hasOwnProperty('image')) {
-				if (key == 'mod') badges.set('moderator', data[key].image);
-				badges.set(key, data[key].image);
-			}
-		}
-	}
-	console.log('badges loaded'.yellow);
-});
-
-function parse_emotes(string) {
-	var words = string.split(' ');
-	for (i in words) {
-		if (emotes.has(words[i])) {
-			words[i] = '<img src="' + emotes.get(words[i]) + '">';
-		}
-	}
-	return words.join(' ');
-}
-
-// Connect the client to the server..
-var client = new irc.client(options);
-client.connect();
-
-// handle twitch chat events
-var log;
-client.on('join', function(channel, user) {
-	log = user + ' has joined';
-	console.log(log.red);
-	user_join(user);
-});
-client.on('part', function(channel, user) {
-	log = user + ' has parted';
-	console.log(log.red);
-	user_part(user);
-});
-client.on('hosted', function(channel, user, viewers) {
-	log = user + ' now hosting with ' + viewer_count + ' viewers';
-	console.log(log.red);
-});
-
-// CHAT RESPONSE
-client.on('chat', function(channel, user, message, self) {
-	var command = message.substr(1);
-	var message_words = message.split(' ');
-	var message_out = parse_emotes(message);
-	var user_badges = [];
-	if (typeof user.badges !== 'null') {
-		for (badge_type in user.badges) {
-			user_badges.push(badges.get(badge_type));
-		}
-	}
-	if (message_words[0] == '!runner') {
-		spawn_random_runner();
-	}
-	if (message_words[0] == '!this') {
-		dick_marquee(message_words[1]);
-		client.say(options.channels[0], '!runner');
-	}
-	if (user['message-type'] == 'chat') {
-		sock_send(JSON.stringify({
-			action: 'chat_add',
-			data: {
-				badges: user_badges,
-				message: message,
-				message_out: message_out,
-				user : user,
-			},
-		}));
-	}
-});
-
-
+twitch_assets.initialize();
+irc_interface.initialize();
 http_server.initialize();
+ws_server.initialize();
 
-
-
-// WEBSOCKETS HERE
-var conn;
-var ws_http = http.createServer(function(request, response) {});
-ws_http.listen(1338, function(){});
-console.log('websockets ready'.magenta);
-ws_server = new ws.server({	
-	httpServer: ws_http
-});
-ws_server.on('request', function(request) {
-	console.log('http bot window reloaded'.magenta);
-	conn = request.accept(null, request.origin).on('message', function(event) {
-//		console.log(event);
-		var data = JSON.parse(event.utf8Data);
-		var runner_count = Object.keys(data.runners).length;
-		//console.log(runner_count);
-	});
-	conn.on('connect', function() {
-	});
-});
-
-function client_send_init() {
-	console.log('client init'.green);
-	update_watchers_info();
-	spawn_random_runner();
-}
-
-function sock_send(data) {
-	if (typeof conn != 'object') {
-		console.log('load the browser part n00b!'.green);
-	}
-	else {
-		conn.send(data);
-	}
-}
 
 
 //  RUNNER HANDLER HERE
@@ -192,27 +50,6 @@ function spawn_random_runner() {
 })();
 
 
-// WATCHERS HANDLER HERE
-var watchers = [];
-function user_join(user) {
-	watchers.unshift(user);
-	update_watchers_info();
-}
-function user_part(user) {
-	watchers.splice(watchers.indexOf(user), 1);
-	update_watchers_info();
-}
-function update_watchers_info() {
-	sock_send(JSON.stringify({
-		action: 'watchers_update',
-		data: {
-			count: watchers.length,
-			text: watchers.join(' '),
-		}
-	}));
-}
-
-
 //  DICK MARQUEE
 function dick_marquee(dick_size) {
 	dick_size = parseInt(dick_size);
@@ -220,7 +57,7 @@ function dick_marquee(dick_size) {
 	if (dick_size < 2) dick_size = 2;
 	if (dick_size > 253) dick_size = 253;
 	var dick_out = '8' + Array(dick_size).join('=') + 'D';
-	console.log(dick_out);
+	console.log(dick_out.rainbow);
 	sock_send(JSON.stringify({
 		action: 'dick_this',
 		data: dick_out,

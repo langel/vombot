@@ -10,14 +10,22 @@ $.easing.easeInCubic = function(x, t, b, c, d) {
 };
 
 
-// establish websocket connection and kickstart running
-$(function() {
+// establish websocket connection
+(function() {
 	window.ws = window.WebSocket || window.MozWebSocket;
 	conn = new ws('ws://' + window.location.host.split(':')[0] + ':1338');
-	conn.onopen = function() {};
-	conn.onerror = function() {
-		$('body').append('AN ERROR OCCURRED');
+
+	conn.onopen = function() {
+		log_write('<span style="color:green;">websocket connection opened</span>');
 	};
+	conn.onclose = function() {
+		log_write('<span style="color:red;">websocket connection closed</span>');
+	};
+
+	conn.onerror = function() {
+		log_write('AN ERROR OCCURRED');
+	};
+
 	conn.onmessage = function(message) {
 		try {
 			json = JSON.parse(message.data);
@@ -42,6 +50,11 @@ $(function() {
 			watchers_update(json.data);
 		}
 	};
+})();
+
+
+// kickstart running
+$(function() {
 	saw = $('#blade').offset({left: saw_x, top: ~~(baseline_y - 20)});
 	setInterval(function() {
 		running_from_saw.check_for_collisions();
@@ -222,8 +235,13 @@ function chat_add(message) {
 	out += '<span style="color:' + message.user.color + '">' + message.user.username + ' : </span>' + message.message_out + '<br>';
 	$('#twitch_chats_inner').append(out);
 	delete message.message_out;
-	var dump = ' ' + JSON.stringify(message) + '<br>';
-	$('#stdout').append(dump);
+	var dump = ' ' + JSON.stringify(message);
+//	$('#stdout').append(message);\
+	log_write(dump);
+}
+
+function log_write(text) {
+	$('#stdout').append(text + '<br>');
 }
 
 function watchers_update(data) {

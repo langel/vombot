@@ -43,7 +43,7 @@ module.exports = {
 				res.end();
 			}
 		}).listen(http_specs.port, http_specs.ip);
-		console.log(colors.cyan('Server running at ' + http_specs.ip + ':' + http_specs.port));
+		console.log(colors.cyan('http server running at ' + http_specs.ip + ':' + http_specs.port));
 	}
 
 };
