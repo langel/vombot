@@ -1,16 +1,27 @@
 var colors = require('colors');
 var curl = require('curl');
+var fs = require('fs');
 
 
 var badges, emotes, watchers;
 
 
+twitch_api_call = (url, callback) => {
+	curl.get(url, {
+
+		'Accept': 'application/vnd.twitchtv.v3+json',
+		'Client-ID': '55g8xujjatswlanvyc37tergmjfmctl',
+	}, callback);
+};
+
 badges_get = function() {
-	curl.get('https://api.twitch.tv/kraken/chat/emotes/badges', {}, function(err, response, body) {
+	twitch_api_call('https://api.twitch.tv/kraken/chat/puke7/badges', function(err, response, body) {
 		// interpret response
 		var data = JSON.parse(body);
+		console.log(data);
 		badges = new Map();
-		for (key in data) {
+		return badges;
+		for (key in data.global_mod) {
 			if ((typeof data[key] === 'object') && (data[key] !== null)) {
 				if (data[key].hasOwnProperty('image')) {
 					if (key == 'mod') badges.set('moderator', data[key].image);
@@ -23,16 +34,18 @@ badges_get = function() {
 };
 
 emotes_get = function() {
-	curl.get('https://api.twitch.tv/kraken/chat/emotes/emoticons', {}, function(err, response, body) {
-		console.log(err);
+	twitch_api_call('https://api.twitch.tv/kraken/chat/puke7/emoticons', function(err, response, body) {
 		// interpret response
+		fs.writeFile('emotes.json', body);
 		response = JSON.parse(body);
-		var data = response.emoticons;
 		// create the map
 		emotes = new Map();
-		data.forEach(function(emote) {
-			emotes.set(emote.regex, emote.url);
+		return emotes;
+		response.emoticons.forEach(function(emote) {
+			console.log(emote);
+			emotes.set(emote.regex, emote.images[0].url);
 		});
+		fs.writeFile('emotesparse.json', JSON.stringify(emotes));
 		console.log('emotes array loaded '.yellow);
 	});
 };
@@ -41,8 +54,8 @@ emotes_get = function() {
 module.exports = {	
 
 	initialize: function() {
-		//badges_get();
-		//emotes_get();
+		badges_get();
+		emotes_get();
 		watchers = [];
 	},
 
