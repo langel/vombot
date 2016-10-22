@@ -24,6 +24,7 @@ badges_get = function() {
 
 emotes_get = function() {
 	curl.get('https://api.twitch.tv/kraken/chat/emotes/emoticons', {}, function(err, response, body) {
+		console.log(err);
 		// interpret response
 		response = JSON.parse(body);
 		var data = response.emoticons;
@@ -40,8 +41,8 @@ emotes_get = function() {
 module.exports = {	
 
 	initialize: function() {
-		badges_get();
-		emotes_get();
+		//badges_get();
+		//emotes_get();
 		watchers = [];
 	},
 

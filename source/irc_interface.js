@@ -4,7 +4,7 @@ var twitch_assets = require('./twitch_assets.js');
 var ws_server = require('./ws_server.js');
 
 
-var creds = require('./../token.js');
+var creds = require('./../token.json');
 var options = {
 	options: {
 		debug: true
