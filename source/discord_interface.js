@@ -10,7 +10,7 @@ setInterval(function() {
 		bot.sendMessage(noise_queue);
 		noise_queue = {};
 	}
-}, 5000);
+}, 25000);
 	
 
 module.exports = {
@@ -30,10 +30,17 @@ module.exports = {
 
 		bot.on('message', function(user, user_id, channel_id, message, event) {
 			if (user_id != bot.id) {
+				if (message.toLowerCase().indexOf('pizza') != -1) {
+					console.log('discord pizza');
+					bot.sendMessage({
+						to: channel_id,
+						message: ':pizza: PRAISE ZA! :pizza:'
+					});
+				}
 				if (channel_id == '239197333424832522') {
 					noise_queue = {
 						to: channel_id,
-						message: ':derp: :pizza: :illuminati: :pepe:'
+						message: 'what you say!'
 					};
 				};
 			};
