@@ -50,6 +50,10 @@ $.easing.easeInCubic = function(x, t, b, c, d) {
 		if (json.action == 'watchers_update') {
 			watchers_update(json.data);
 		}
+		if (json.action == 'play_audio') {
+			console.log(json.data);
+			play_audio(json.data);
+		}
 	};
 })();
 
@@ -225,6 +229,12 @@ function dick_this(dick) {
 			$(this).remove();
 		}
 	});
+}
+
+function play_audio(audio_file) {
+	var audio = new Audio('audio/' + audio_file);
+	audio.play();
+	console.log('playing ' + audio_file);
 }
 
 

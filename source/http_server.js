@@ -29,6 +29,11 @@ module.exports = {
 					res.writeHead(200, {'Content-Type': 'text/javascript' });
 					res.end(file, 'binary');
 				}
+				else if (action.substr(-4) == '.wav') {
+					var file = fs.readFileSync(web_root + action);
+					res.writeHead(200, {'Content-Type': 'audio/wav' });
+					res.end(file, 'binary');
+				}
 				else {
 					if (action == '/') action = '/index.html';
 					res.writeHead(200, {'Content-Type': 'text/html'});

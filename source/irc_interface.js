@@ -63,11 +63,11 @@ module.exports = {
 		// handle twitch chat events
 		client.on('join', function(channel, user) {
 			update_watchers_info(twitch_assets.watcher_join(user));
-			client.say(options.channels[0], user + ' has joined');
+			//client.say(options.channels[0], user + ' has joined');
 		});
 		client.on('part', function(channel, user) {
 			update_watchers_info(twitch_assets.watcher_part(user));
-			client.say(options.channels[0], user + ' has parted');
+			//client.say(options.channels[0], user + ' has parted');
 		});
 
 		client.on('hosted', function(channel, user, viewers) {

@@ -4,14 +4,22 @@ var ws_server = require('./ws_server.js');
 
 
 
-//  RUNNER HANDLER HERE
+//  ASSET MEDIA HANDLER HERE
 var available_runners = [];
+var princess_sounds = [];
 
 (function init_runner_data() {
 	available_runners = fs.readdirSync('source/html/sprites/').filter(function(val) {
 		return (val.indexOf('-running.gif') != -1);
 	});
 	console.log(available_runners);
+})();
+
+(function init_princess_audio() {
+	princess_sounds = fs.readdirSync('source/html/audio/').filter(function(val) {
+		return (val.indexOf('.wav') != -1);
+	});
+	console.log(princess_sounds);
 })();
 
 
@@ -38,6 +46,17 @@ module.exports = {
 		ws_server.send({
 			action: 'dick_this',
 			data: dick_out,
+		});
+	},
+
+	'!princess': function(words) {
+		var audio_file = princess_sounds[Math.floor(Math.random() * princess_sounds.length)];
+		//audio_file = audio_file.substr(0, audio_file.indexOf('-'));
+		log = 'princess audio ' + audio_file + ' played';
+		console.log(log.red);
+		ws_server.send({
+			action: 'play_audio',
+			data: audio_file,
 		});
 	},
 
