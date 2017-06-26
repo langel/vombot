@@ -6,10 +6,15 @@ var bot;
 var noise_queue = {};
 
 setInterval(function() {
+/*
+
+WHAT THE FUCK IT THIS FOR?
+
 	if (noise_queue.length != 0) {
 		bot.sendMessage(noise_queue);
 		noise_queue = {};
 	}
+*/
 }, 25000);
 	
 
