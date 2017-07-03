@@ -16,7 +16,7 @@ var princess_sounds = [];
 })();
 
 (function init_princess_audio() {
-	princess_sounds = fs.readdirSync('source/html/audio/').filter(function(val) {
+	princess_sounds = fs.readdirSync('source/html/audio/peach/').filter(function(val) {
 		return (val.indexOf('.wav') != -1);
 	});
 	console.log(princess_sounds);
@@ -49,6 +49,13 @@ module.exports = {
 		});
 	},
 
+	'!pace': function() {
+		ws_server.send({
+			action: 'play_audio',
+			data: 'wrp.mp3',
+		});
+	},
+
 	'!princess': function(words) {
 		var audio_file = princess_sounds[Math.floor(Math.random() * princess_sounds.length)];
 		//audio_file = audio_file.substr(0, audio_file.indexOf('-'));
@@ -56,7 +63,7 @@ module.exports = {
 		console.log(log.red);
 		ws_server.send({
 			action: 'play_audio',
-			data: audio_file,
+			data: 'peach/' + audio_file,
 		});
 	},
 
