@@ -9,17 +9,18 @@ $.easing.easeInCubic = function(x, t, b, c, d) {
 	return c*(t/=d)*t*t + b;
 };
 
-
 // establish websocket connection
-(function() {
+var websocket_start = function() {
 	window.ws = window.WebSocket || window.MozWebSocket;
 	conn = new ws('ws://' + window.location.host.split(':')[0] + ':1338');
 
 	conn.onopen = function() {
 		log_write('<span style="color:green;">websocket connection opened</span>');
 	};
+
 	conn.onclose = function() {
 		log_write('<span style="color:red;">websocket connection closed</span>');
+		setTimeout(websocket_start(), 5000);
 	};
 
 	conn.onerror = function() {
@@ -55,6 +56,10 @@ $.easing.easeInCubic = function(x, t, b, c, d) {
 			play_audio(json.data);
 		}
 	};
+};
+// kickstart mah hart
+(function () {
+	websocket_start();
 })();
 
 

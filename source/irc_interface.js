@@ -35,15 +35,19 @@ function update_watchers_info(watchers) {
 
 function chat_add(user, message, type) {
 	var command = message.substr(1);
-	var message_out = twitch_assets.parse_emotes(message);
+	// XXX twitch api suxx0hjrz!!
+	//var message_out = twitch_assets.parse_emotes(message);
+	var message_out = message;
+	/*
 	var user_badges = [];
 	if (typeof user.badges !== 'null') {
 		user_badges = twitch_assets.user_badges_array(user.badges);
 	}
+	*/
 	ws_server.send({
 		action: 'chat_add',
 		data: {
-			badges: user_badges,
+			//badges: user_badges,
 			message: message,
 			message_out: message_out,
 			user: user,
@@ -82,6 +86,7 @@ module.exports = {
 			// handle commands
 			var words = message.split(' ');
 			if (words[0].substring(0, 1) === '!') {
+				words[0] = words[0].toLowerCase();
 				if (typeof commands[words[0]] === 'function') {
 					commands[words[0]](words);
 				}

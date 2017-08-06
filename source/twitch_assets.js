@@ -54,8 +54,9 @@ emotes_get = function() {
 module.exports = {	
 
 	initialize: function() {
-		badges_get();
-		emotes_get();
+		// XXX twitch's api is a moving target :(
+		//badges_get();
+		//emotes_get();
 		watchers = [];
 	},
 

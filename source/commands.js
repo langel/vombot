@@ -25,6 +25,13 @@ var princess_sounds = [];
 
 module.exports = {
 
+	'!airhorn': function() {
+		ws_server.send({
+			action: 'play_audio',
+			data: 'airhorn.mp3',
+		});
+	},
+
 	'!runner': function(words) {
 		var runner_name = available_runners[Math.floor(Math.random() * available_runners.length)];
 		runner_name = runner_name.substr(0, runner_name.indexOf('-'));
