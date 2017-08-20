@@ -1,6 +1,7 @@
 var creds = require('./../token.json');
 var discord = require('discord.io');
 var markov = require('./markov.js');
+var urlencode = require('urlencode');
 
 var bot;
 
@@ -30,6 +31,31 @@ module.exports = {
 		markov.init();
 		bot = new discord.Client(discord_creds);
 
+		bot.on('debug', (e)=>{
+			console.log(`discord debug :`);
+			console.log(e);
+			// XXX make this a function?
+			if (e.t === 'MESSAGE_REACTION_ADD') {
+				var emoji = (e.d.emoji.id === null) ? urlencode(e.d.emoji.name) : e.d.emoji.name + ':' + e.d.emoji.id;
+				bot._req(
+					'put', 
+					`https:\/\/canary.discordapp.com/api/v6/channels/${e.d.channel_id}/messages/${e.d.message_id}/reactions/${emoji}/@me`, 
+					(err, res)=>{
+						console.log(err);
+						//console.log(res);
+					}
+				);  
+			}
+		});
+		bot.on('error', (e)=>{
+			console.log(`discord error :`);
+			console.log(e);
+		});
+
+		bot.on('disconnect', ()=>{
+			bot.connect();
+		});
+
 		bot.on('ready', function() {
 			console.log(bot.username + ' has joined discord');
 			//console.log(bot);
@@ -41,11 +67,18 @@ module.exports = {
 				if (message === 'ping') {
 					bot.sendMessage({
 						to: channel_id,
-						message: "pong!"
+						message: "Pong"
 					});
 					console.log('discord ping pong');
 				}							
 				markov.log_chat(message + '\n');
+				// respond to name 
+				if (message.includes('vombot')) {
+					bot.sendMessage({
+						to: channel_id,
+						message: markov.generate_string(33),
+					});
+				}
 				if (message == '!markov') {
 					bot.sendMessage({
 						to: channel_id,
@@ -66,7 +99,7 @@ module.exports = {
 						message: 'what you say!'
 					};
 				};
-				if (channel_id == '346192728499027978') {
+				if (channel_id == '346236161922039818') {
 				/*
 					bot.sendMessage({
 						to: channel_id,

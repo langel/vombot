@@ -1,32 +1,45 @@
 var fs = require('fs');
+var _ = require('lodash');
 
 var filename = 'markov_log.txt';
 var file_id;
 var map = {};
+var word_no_prefix = ['.', ',', ';', '?', '!'];
+var newline_token = '#~$EOL^%(';
+var starter_words = [];
 
 
 module.exports = {
 
 	generate_string: function(length) {
-		var map_copy = JSON.parse(JSON.stringify(map));
-		var word = random_key(map);
+		var word = starter_words[Math.floor(Math.random() * starter_words.length)];
 		var string = word;
-		for (var i=0; i<=length; i++) {
-			map_copy = JSON.parse(JSON.stringify(map[word]));
-			word = random_key(map_copy);
-			string += ' ' + word;
+		var newline = false;
+		while (!newline) {
+			word = random_key(map[word]);
+			if (word == newline_token) {
+				newline = true;
+			}
+			else {
+				if (!word_no_prefix.includes(word)) string += ' ';
+				string += word;
+			}
 		}
+		console.log('vombot says : ' + string);
 		return string;
 	},
 
 	init: function() {
 		//file_id = fs.openSync(filename, 'a+');
 		fs.readFile(filename, 'utf8', (err, data) => {
-			map_append(data);
+			data.split(/\r?\n/).forEach((line)=>{
+				map_append(line);
+			});
 		});
 	},
 
 	log_chat: function(data) {
+		if (data.startsWith('!')) return false;
 		fs.writeFile(filename, data, { flag: 'a+'});
 		map_append(data);
 	},
@@ -39,8 +52,9 @@ module.exports = {
 
 var random_key = function(obj) {
 	var temp_key, keys = [];
-	for(temp_key in obj) {
-		if(obj.hasOwnProperty(temp_key)) {
+	var obj_copy = JSON.parse(JSON.stringify(obj));
+	for (temp_key in obj_copy) {
+		if (obj.hasOwnProperty(temp_key)) {
 			keys.push(temp_key);
 		}
 	}
@@ -48,11 +62,27 @@ var random_key = function(obj) {
 }
 
 var map_append = function(data) {
-	var new_map = data.match(/[\w-']+|[^\w\s]+/g);
+	console.log(process.memoryUsage());
+	data = data.replace(/\r?\n/g, ' ' + newline_token + ' ');
+	//var new_map = data.match(/[\w-']+|[^\w\s]+/g);
+	var new_map = data.split(' ');
+	// only process lines with more than one word
+	if (new_map.length === 1) {
+		return false;
+	}
+	//var new_map = data.split(/ /);
 	var previous_word = '';
-	new_map.forEach((word) => {
-		if (typeof map[previous_word] === "undefined") map[previous_word] = {};
-		map[previous_word][word] = ++map[previous_word][word] || 1;
+	new_map.forEach((word, index, new_map) => {
+		if (index === 0 && !starter_words.includes(word)) starter_words.push(word);
+		word_append(previous_word, word);
 		previous_word = word;
+		if (index === new_map.length - 1) {
+			word_append(previous_word, newline_token);
+		}
 	});
+};
+
+var word_append = function(word, descendant) {
+	if (typeof map[word] === "undefined") map[word] = {};
+	map[word][descendant] = ++map[word][descendant] || 1;
 };

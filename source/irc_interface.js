@@ -1,5 +1,6 @@
 var commands = require('./commands.js');
 var irc = require('tmi.js');
+var markov = require('./markov.js');
 var twitch_assets = require('./twitch_assets.js');
 var ws_server = require('./ws_server.js');
 
@@ -90,6 +91,11 @@ module.exports = {
 				if (typeof commands[words[0]] === 'function') {
 					commands[words[0]](words);
 				}
+			}
+			// log to markov
+			markov.log_chat(message + '\n');
+			if (message.includes('vombot')) {
+				client.say(channel, markov.generate_string());
 			}
 		});
 
