@@ -1,8 +1,7 @@
 var fs = require('fs');
 var _ = require('lodash');
 
-var filename = 'markov_log.txt';
-var file_id;
+var _file_target;
 var map = {};
 var word_no_prefix = ['.', ',', ';', '?', '!'];
 var newline_token = '#~$EOL^%(';
@@ -29,18 +28,18 @@ module.exports = {
 		return string;
 	},
 
-	init: function() {
-		//file_id = fs.openSync(filename, 'a+');
+	initialize: function(filename) {
 		fs.readFile(filename, 'utf8', (err, data) => {
 			data.split(/\r?\n/).forEach((line)=>{
 				map_append(line);
 			});
 		});
+		_file = filename;
 	},
 
 	log_chat: function(data) {
 		if (data.startsWith('!')) return false;
-		fs.writeFile(filename, data, { flag: 'a+'});
+		fs.writeFile(_file, data, { flag: 'a+'});
 		map_append(data);
 	},
 

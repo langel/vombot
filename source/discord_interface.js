@@ -6,6 +6,7 @@ var urlencode = require('urlencode');
 var bot;
 
 var noise_queue = {};
+var channel_message_counter = {};
 
 setInterval(function() {
 /*
@@ -28,7 +29,6 @@ module.exports = {
 			autorun: true
 		};
 
-		markov.init();
 		bot = new discord.Client(discord_creds);
 
 		bot.on('debug', (e)=>{
@@ -79,11 +79,30 @@ module.exports = {
 						message: markov.generate_string(33),
 					});
 				}
-				if (message == '!markov') {
+				else if (message == '!markov') {
 					bot.sendMessage({
 						to: channel_id,
 						message: markov.generate_string(33),
 					});
+				}
+				else {
+					// count messages in channels
+					// interject responses randomly
+					if (typeof channel_message_counter[channel_id] === "undefined") {
+						channel_message_counter[channel_id] = {
+							count: 0,
+							target: Math.floor(Math.random() * 13 + 12)
+						}
+					}
+					channel_message_counter[channel_id].count++;
+					// if its time post message and reset counter
+					if (channel_message_counter[channel_id].count >= channel_message_counter[channel_id].target) {
+						bot.sendMessage({
+							to: channel_id,
+							message: markov.generate_string()
+						});
+						delete channel_message_counter[channel_id];
+					}
 				}
 				// pizza 
 				if (message.toLowerCase().indexOf('pizza') != -1) {
