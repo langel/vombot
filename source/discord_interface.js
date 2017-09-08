@@ -71,21 +71,15 @@ module.exports = {
 					});
 					console.log('discord ping pong');
 				}							
-				markov.log_chat(message + '\n');
 				// respond to name 
-				if (message.includes('vombot')) {
-					bot.sendMessage({
-						to: channel_id,
-						message: markov.generate_string(33),
-					});
-				}
-				else if (message == '!markov') {
+				if (message == '!markov' || message.includes('vombot') || message.includes('tobmov')) {
 					bot.sendMessage({
 						to: channel_id,
 						message: markov.generate_string(33),
 					});
 				}
 				else {
+					markov.log_chat(message + '\n');
 					// count messages in channels
 					// interject responses randomly
 					if (typeof channel_message_counter[channel_id] === "undefined") {
@@ -112,19 +106,7 @@ module.exports = {
 						message: ':pizza: PRAISE ZA! :pizza:'
 					});
 				}
-				if (channel_id == '239197333424832522') {
-					noise_queue = {
-						to: channel_id,
-						message: 'what you say!'
-					};
-				};
 				if (channel_id == '346236161922039818') {
-				/*
-					bot.sendMessage({
-						to: channel_id,
-						message: 'you dong'
-					});
-				*/
 					if (message == '!map') {
 						console.log(markov.map_get());
 					}
