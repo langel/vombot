@@ -79,9 +79,9 @@ module.exports = {
 					});
 				}
 				else {
-					markov.log_chat(message + '\n');
+					let scrubbed_message = message.replace(/<@!?([0-9])+>/g, 'sumnub');
+					markov.log_chat(scrubbed_message + '\n');
 					// count messages in channels
-					// interject responses randomly
 					if (typeof channel_message_counter[channel_id] === "undefined") {
 						channel_message_counter[channel_id] = {
 							count: 0,
@@ -89,12 +89,13 @@ module.exports = {
 						}
 					}
 					channel_message_counter[channel_id].count++;
-					// if its time post message and reset counter
+					// interject responses randomly
 					if (channel_message_counter[channel_id].count >= channel_message_counter[channel_id].target) {
 						bot.sendMessage({
 							to: channel_id,
 							message: markov.generate_string()
 						});
+						// if its time post message and reset counter
 						delete channel_message_counter[channel_id];
 					}
 				}
