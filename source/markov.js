@@ -61,7 +61,7 @@ var random_key = function(obj) {
 }
 
 var map_append = function(data) {
-	console.log(process.memoryUsage());
+	//console.log(process.memoryUsage());
 	data = data.replace(/\r?\n/g, ' ' + newline_token + ' ');
 	//var new_map = data.match(/[\w-']+|[^\w\s]+/g);
 	var new_map = data.split(' ');
