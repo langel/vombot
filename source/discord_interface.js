@@ -92,7 +92,7 @@ module.exports = {
 					// XXX this work?
 					//let channel_status = get_channel_status(channel_id);
 					//if (channel_status.nsfw === true) return false;
-					console.log(channel_status);
+					//console.log(channel_status);
 					// replace @me's with a string
 					let scrubbed_message = message.replace(/<@!?([0-9])+>/g, 'sumnub');
 					markov.log_chat(scrubbed_message + '\n');
