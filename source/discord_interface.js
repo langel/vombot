@@ -1,3 +1,9 @@
+/*
+	discord.io module is currently borked
+	use the following to connect properly :
+	npm install woor/discord.io#gateway_v6
+*/
+
 var creds = require('./../token.json');
 var discord = require('discord.io');
 var markov = require('./markov.js');
