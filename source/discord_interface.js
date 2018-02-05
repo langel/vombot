@@ -88,14 +88,14 @@ module.exports = {
 					});
 				}
 				else {
-					// make sure not to log nsfw messages
-					// XXX this work?
-					//let channel_status = get_channel_status(channel_id);
-					//if (channel_status.nsfw === true) return false;
-					//console.log(channel_status);
 					// replace @me's with a string
 					let scrubbed_message = message.replace(/<@!?([0-9])+>/g, 'sumnub');
-					markov.log_chat(scrubbed_message + '\n');
+					// don't markov track in the nsfw channel
+					// XXX should read channel name looking for 'nsfw'; requires extra api call
+					if (channel_id != 239197333424832522) {
+						markov.log_chat(scrubbed_message + '\n');
+						console.log('markov logged : ' + message);
+					}
 					// count messages in channels
 					if (typeof channel_message_counter[channel_id] === "undefined") {
 						channel_message_counter[channel_id] = {
