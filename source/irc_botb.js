@@ -9,6 +9,9 @@ var options = {
 	username: 'vombot',
 	channel: '#botb',
 };
+//var nick_color = '\x02\x0302,01';
+var nick_color = '\x02';
+var reset_color = '\x0f';
 
 
 module.exports = {
@@ -31,11 +34,17 @@ module.exports = {
 			}
 			else {
 				var channel_id = discord_interface.channel_id('botb');
-				discord_interface.say(channel_id, '<' + from + '> ' + text);
 				let scrubbed_text = text.replace(/<@!?([0-9])+>/g, 'sumnub');
+				discord_interface.relay(channel_id, from, scrubbed_text);
 				markov.log_chat(scrubbed_text + '\n');
 			}
 		});
+	},
+	
+	relay: function(to, user, text) {
+		console.log('sending to irc ' + to + ' : ' + text);
+		text = '[' + nick_color + user + reset_color + '] ' + text;
+		bot.say(to, text);
 	},
 
 	say: function(to, text) {

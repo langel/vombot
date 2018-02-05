@@ -95,7 +95,7 @@ module.exports = {
 				else {
 					// post to irc #botb
 					if (channel_id == channel_ids.botb) {
-						irc_botb.say('#botb', '<' + user + '> ' + message);
+						irc_botb.relay('#botb', user, message);
 					}
 					// replace @me's with a string
 					let scrubbed_message = message.replace(/<@!?([0-9])+>/g, 'sumnub');
@@ -147,6 +147,19 @@ module.exports = {
 		return channel_ids[channel_name];
 	},
 
+	relay: function(channel_id, user, message) {
+		console.log('sending message to discord ' + channel_id);
+		console.log(message);
+		if (user == 'BotB') {
+			message = message.replace(/\x0b\[[0-9;]*[a-zA-Z]/, '');
+			message = '```BotB :: ' + message + '```';
+		}
+		else message = '[**' + user + '**] ' + message;
+		console.log(bot.sendMessage({
+			to: channel_id,
+			message: message,
+		}));
+	},
 
 	say: function(channel_id, message) {
 		console.log('sending message to discord ' + channel_id);
