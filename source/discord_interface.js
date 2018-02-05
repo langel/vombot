@@ -1,27 +1,32 @@
 var creds = require('./../token.json');
 var discord = require('discord.io');
 var markov = require('./markov.js');
+var irc_botb = require('./irc_botb.js');
 var urlencode = require('urlencode');
 
 var bot;
+var channel_ids = {
+	botb: '239107754575265803',
+	nsfw: '239197333424832522',
+	dm: '346236161922039818',
+};
 
 var noise_queue = {};
 var channel_message_counter = {};
 var channel_data = {};
 var api = `https:\/\/canary.discordapp.com/api/v6`;
 
-setInterval(function() {
-/*
 
-WHAT THE FUCK IT THIS FOR?
-
-	if (noise_queue.length != 0) {
-		bot.sendMessage(noise_queue);
-		noise_queue = {};
+var get_channel_status = function(channel_id) {
+	if (typeof channel_data[channel_id] !== 'object') {
+		bot._req('get', `${api}/channels/${channel_id}`, function(err, res) {
+			console.log(res.body);	
+			return channel_data[channel_id] = res.body;
+		});
 	}
-*/
-}, 25000);
-	
+	else return channel_data[channel_id];
+}
+
 
 module.exports = {
 
@@ -81,18 +86,22 @@ module.exports = {
 					console.log('discord ping pong');
 				}							
 				// respond to name 
-				if (message == '!markov' || message.includes('vombot') || message.includes('tobmov')) {
+				if (message == '!markov' || message.toLowerCase().includes('vombot') || message.includes('tobmov')) {
 					bot.sendMessage({
 						to: channel_id,
 						message: markov.generate_string(33),
 					});
 				}
 				else {
+					// post to irc #botb
+					if (channel_id == channel_ids.botb) {
+						irc_botb.say('#botb', '<' + user + '> ' + message);
+					}
 					// replace @me's with a string
 					let scrubbed_message = message.replace(/<@!?([0-9])+>/g, 'sumnub');
 					// don't markov track in the nsfw channel
 					// XXX should read channel name looking for 'nsfw'; requires extra api call
-					if (channel_id != 239197333424832522) {
+					if (channel_id != channel_ids.nsfw) {
 						markov.log_chat(scrubbed_message + '\n');
 						console.log('markov logged : ' + message);
 					}
@@ -122,7 +131,7 @@ module.exports = {
 						message: ':pizza: PRAISE ZA! :pizza:'
 					});
 				}
-				if (channel_id == '346236161922039818') {
+				if (channel_id == channel_ids.dm) {
 					if (message == '!map') {
 						console.log(markov.map_get());
 					}
@@ -131,17 +140,21 @@ module.exports = {
 		});
 
 		console.log(bot);
-	}
+	},
+
+
+	channel_id: function(channel_name) {
+		return channel_ids[channel_name];
+	},
+
+
+	say: function(channel_id, message) {
+		console.log('sending message to discord ' + channel_id);
+		console.log(message);
+		console.log(bot.sendMessage({
+			to: channel_id,
+			message: message,
+		}));
+	},
 
 };
-
-
-var get_channel_status = function(channel_id) {
-	if (typeof channel_data[channel_id] !== 'object') {
-		bot._req('get', `${api}/channels/${channel_id}`, function(err, res) {
-			console.log(res.body);	
-			return channel_data[channel_id] = res.body;
-		});
-	}
-	else return channel_data[channel_id];
-}
