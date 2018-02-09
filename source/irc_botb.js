@@ -35,6 +35,7 @@ module.exports = {
 			else {
 				var channel_id = discord_interface.channel_id('botb');
 				let scrubbed_text = text.replace(/<@!?([0-9])+>/g, 'sumnub');
+				scrubbed_text = scrubbed_text.replace(/\u0003(?:[0-9]{1,2})?(?:,[0-9]{1,2})?|\u0002|\u001d|\u001f|\u001e|\u0011/g, '');
 				discord_interface.relay(channel_id, from, scrubbed_text);
 				markov.log_chat(scrubbed_text + '\n');
 			}
