@@ -34,7 +34,9 @@ module.exports = {
 			}
 			else {
 				var channel_id = discord_interface.channel_id('botb');
+				// block highlighting dickswordians
 				let scrubbed_text = text.replace(/<@!?([0-9])+>/g, 'sumnub');
+				// scrub out ansi/irc command/color codes
 				scrubbed_text = scrubbed_text.replace(/\u0003(?:[0-9]{1,2})?(?:,[0-9]{1,2})?|\u0002|\u001d|\u001f|\u001e|\u0011/g, '');
 				discord_interface.relay(channel_id, from, scrubbed_text);
 				markov.log_chat(scrubbed_text + '\n');
@@ -44,8 +46,13 @@ module.exports = {
 	
 	relay: function(to, user, text) {
 		console.log('sending to irc ' + to + ' : ' + text);
-		text = '[' + nick_color + user + reset_color + '] ' + text;
-		bot.say(to, text);
+		let nick = '[' + nick_color + user + reset_color + ']';
+		// check for bot commands
+		if (text.substr(0,1) == '!') {
+			bot.say(to, nick);
+			bot.say(to, text);
+		}
+		else bot.say(to, nick + ' ' + text);
 	},
 
 	say: function(to, text) {

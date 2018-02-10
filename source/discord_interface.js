@@ -157,8 +157,7 @@ module.exports = {
 		console.log('sending message to discord ' + channel_id);
 		console.log(message);
 		if (user == 'BotB') {
-			message = message.replace(/\x0b\[[0-9;]*[a-zA-Z]/, '');
-			message = '```BotB :: ' + message + '```';
+			message = '**BotB :: ' + message + '**';
 		}
 		else message = '[**' + user + '**] ' + message;
 		console.log(bot.sendMessage({
