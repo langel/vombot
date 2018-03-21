@@ -22,14 +22,25 @@ var princess_sounds = [];
 	console.log(princess_sounds);
 })();
 
+var play_audio = function(soundfile) {
+	ws_server.send({
+		action: 'play_audio',
+		data: soundfile,
+	});
+};
 
 module.exports = {
 
 	'!airhorn': function() {
-		ws_server.send({
-			action: 'play_audio',
-			data: 'airhorn.mp3',
-		});
+		play_audio('airhorn.mp3');
+	},
+
+	'!california': function() {
+		play_audio('california.mp3');
+	},
+	
+	'!laser': function() {
+		play_audio('laser.mp3');
 	},
 
 	'!runner': function(words) {
@@ -57,10 +68,7 @@ module.exports = {
 	},
 
 	'!pace': function() {
-		ws_server.send({
-			action: 'play_audio',
-			data: 'wrp.mp3',
-		});
+		play_audio('wrp.mps');
 	},
 
 	'!princess': function(words) {
@@ -68,10 +76,10 @@ module.exports = {
 		//audio_file = audio_file.substr(0, audio_file.indexOf('-'));
 		log = 'princess audio ' + audio_file + ' played';
 		console.log(log.red);
-		ws_server.send({
-			action: 'play_audio',
-			data: 'peach/' + audio_file,
-		});
+		play_audio('peach/' + audio_file);
 	},
 
+	'!monster': function() {
+		play_audio('zeldamonster.mp3');
+	},
 };
