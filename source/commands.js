@@ -68,12 +68,11 @@ module.exports = {
 	},
 
 	'!pace': function() {
-		play_audio('wrp.mps');
+		play_audio('wrp.mp3');
 	},
 
 	'!princess': function(words) {
 		var audio_file = princess_sounds[Math.floor(Math.random() * princess_sounds.length)];
-		//audio_file = audio_file.substr(0, audio_file.indexOf('-'));
 		log = 'princess audio ' + audio_file + ' played';
 		console.log(log.red);
 		play_audio('peach/' + audio_file);
