@@ -245,9 +245,13 @@ function play_audio(audio_file) {
 
 function chat_add(message) {
 	var out = '';
+	/*
+	// XXX we loading badges?
+	// this is borked
 	message.badges.forEach(function(badge_url) {
 		out += '<img class="badge" src="' + badge_url + '">';
 	});
+	*/
 	out += '<span style="color:' + message.user.color + '">' + message.user.username;
 	if (message.type === 'text') {
 		out += ' : </span>';
