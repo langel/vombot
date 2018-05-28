@@ -1,10 +1,10 @@
-var discord_interface = require('./source/discord_interface.js');
-var http_server = require('./source/http_server.js');
-var irc_twitch = require('./source/irc_twitch.js');
-var irc_botb = require('./source/irc_botb.js');
-var markov = require('./source/markov.js');
-var twitch_assets = require('./source/twitch_assets.js');
-var ws_server = require('./source/ws_server.js');
+var discord_interface = require('./lib/discord_interface.js');
+var http_server = require('./lib/http_server.js');
+var irc_twitch = require('./lib/irc_twitch.js');
+var irc_botb = require('./lib/irc_botb.js');
+var markov = require('./lib/markov.js');
+var twitch_assets = require('./lib/twitch_assets.js');
+var ws_server = require('./lib/ws_server.js');
 
 
 
