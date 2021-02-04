@@ -8,7 +8,8 @@
     "curl": "^0.1.4",
     "discord.io": "github:woor/discord.io#gateway_v6",
     "irc": "^0.5.2",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.20",
+    "sync-request": "^6.1.0",
     "tmi.js": "^1.1.1",
     "urlencode": "^1.1.0",
     "websocket": "^1.0.23"

@@ -27,7 +27,6 @@ discord_interface.initialize();
 irc_twitch.initialize();
 irc_botb.initialize();
 http_server.initialize();
-markov.initialize('markov_log.txt');
 ws_server.initialize();
 
 
