@@ -1,4 +1,4 @@
-var discord_interface = require('./lib/discord_interface.js');
+var discord_interface = require('./lib/discord_interface2.js');
 var http_server = require('./lib/http_server.js');
 var irc_twitch = require('./lib/irc_twitch.js');
 var irc_botb = require('./lib/irc_botb.js');
