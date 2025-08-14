@@ -8,6 +8,10 @@ var ws_server = require('./lib/ws_server.js');
 
 
 
+process.on('unhandledRejection', (e) => {
+	console.log(e);
+});
+
 
 /*
 	trying to replace twitch alerts with new follower alerts
