@@ -4,6 +4,7 @@ var irc_twitch = require('./lib/irc_twitch.js');
 var irc_botb = require('./lib/irc_botb.js');
 var markov = require('./lib/markov.js');
 var twitch_assets = require('./lib/twitch_assets.js');
+var twitch_ws = require('./lib/twitch_ws.js');
 var ws_server = require('./lib/ws_server.js');
 
 
@@ -32,6 +33,6 @@ irc_twitch.initialize();
 irc_botb.initialize();
 http_server.initialize();
 ws_server.initialize();
-
+//twitch_ws.initialize();
 
 
